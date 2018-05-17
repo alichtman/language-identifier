@@ -1,8 +1,8 @@
-# Language Identifier
+# Text Language Identifier
 
-`language-identifier` accurately identifies English, French and Italian written text with up to 99% accuracy.
+`text-language-identifier` accurately identifies English, French and Italian written text with up to 99% accuracy.
 
-As this project was intended to help me better understand `n-gram analysis`, no natural language processing modules were imported. Everything was implemented from first principles.
+Since this project was intended to help me better understand `n-gram analysis`, no natural language processing modules were imported. Everything was implemented from first principles.
 
 ![GIF demo](img/demo.gif)
 
@@ -10,7 +10,7 @@ As this project was intended to help me better understand `n-gram analysis`, no 
 
 0. Download this repo as a `.zip`
 1. `cd src`
-2. `$ python3 lang-bigram-id`
+2. `$ python3 lang-bigram-id.py`
 
 Accuracy information for each model will be displayed in the terminal after the analysis is complete.
 
