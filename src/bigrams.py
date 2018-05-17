@@ -13,4 +13,7 @@ def bigrams(words):
 
 
 def file2bigrams(filename):
+	"""
+	Takes a file as input and returns a bigram dictionary.
+	"""
 	return bigrams(open(filename).read().split())

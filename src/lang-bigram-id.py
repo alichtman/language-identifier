@@ -357,7 +357,10 @@ def main():
 	               "../data/correct-responses.txt")
 
 	print("\nDiff the output files to see which lines were predicted differently by certain pairs of models.")
-	print("Try: diff ../output/letter-bigram-laplace-smoothing-predictions.txt ../output/letter-bigram-no-smoothing-predictions.txt")
+	print("Here are some commands to try:")
+	print("\n$ diff ../output/letter-bigram-laplace-smoothing-predictions.txt ../output/letter-bigram-no-smoothing-predictions.txt")
+	print("$ diff ../output/letter-bigram-laplace-smoothing-predictions.txt ../output/word-bigram-no-smoothing-predictions.txt")
+	print("$ diff ../output/letter-bigram-laplace-smoothing-predictions.txt ../output/word-bigram-laplace-smoothing-predictions.txt")
 
 
 if __name__ == "__main__":
