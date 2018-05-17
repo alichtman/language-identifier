@@ -75,7 +75,7 @@ def create_probability_matrix(bigrams_matrix, w0_count, smoothing):
 		for w0 in bigrams_matrix.keys():
 			next_words = bigrams_matrix[w0]
 
-			for w0w1_sequence in next_words.keys:
+			for w0w1_sequence in next_words.keys():
 				bigrams_matrix[w0][w0w1_sequence] = (next_words.get(w0w1_sequence) / w0_count[w0])
 
 	# LaPlace Smoothing
@@ -83,13 +83,11 @@ def create_probability_matrix(bigrams_matrix, w0_count, smoothing):
 	elif smoothing == 1:
 		# print("LAPLACE")
 		v = vocabulary_size(w0_count)
-		# print("VOCAB SIZE:", v)
 		for w0 in bigrams_matrix:
 			next_words = bigrams_matrix[w0]
 			# print("FIRST WORD:", w0)  # , "\tNEXT:")
 			# pprint(next_words.keys())
 			for w0w1_sequence in next_words:
-				# print("NEXT WORD:", w0w1_sequence)
 				bigrams_matrix[w0][w0w1_sequence] = (next_words[w0w1_sequence] + 1) / (w0_count[w0] + v)
 
 	# Good-Turing Smoothing
@@ -108,9 +106,6 @@ def create_probability_matrix(bigrams_matrix, w0_count, smoothing):
 			print("FIRST WORD:", w0)  # , "\tNEXT:")
 			# pprint(next_words.keys())
 			for w0w1_sequence in next_words:
-
-				# GOOD TURING SMOOTHING PROBABILITY ADJUSTMENT
-
 				# P_GT (zero) = N_1 / N
 				if bigrams_matrix[w0][w0w1_sequence] == 0:
 					# bigrams_matrix[w0][w0w1_sequence] = N_1 / v
@@ -136,7 +131,7 @@ def calculate_error(test_matrix, model_matrix):
 	return error
 
 
-def bigram_prcoessing(bigram_type, file, smoothing):
+def bigram_processing(bigram_type, file, smoothing):
 	"""
 	Run word processing pipeline on file.
 	"""
@@ -159,8 +154,14 @@ def bigram_prcoessing(bigram_type, file, smoothing):
 
 
 def test_models(output_file, word_bigram, eng_model, fre_model, ita_model, smoothing):
+	"""
+	Iterate through test file and test all models against each line.
+	Assign the language with the least error to the corresponding line
+	in the output file.
 
-	# TODO
+	:@param: word_bigram 	True if it's a word bigram model, False if letter.
+	:@param: smoothing 		0 for No Smoothing, 1 for LaPlace, 2 for Good Turing
+	"""
 
 	# Look at each line individually
 	line_num = 1
@@ -179,30 +180,30 @@ def test_models(output_file, word_bigram, eng_model, fre_model, ita_model, smoot
 				line_prob_matrix = create_probability_matrix(line_bigrams, word_freq, smoothing=1)
 
 				# Calculate error of all three models
-				english_err = calculate_error(line_prob_matrix, english_bigram_model)
-				french_err = calculate_error(line_prob_matrix, french_bigram_model)
-				italian_err = calculate_error(line_prob_matrix, italian_bigram_model)
+				english_err = calculate_error(line_prob_matrix, eng_model)
+				french_err = calculate_error(line_prob_matrix, fre_model)
+				italian_err = calculate_error(line_prob_matrix, ita_model)
 
 				# Find min error
 				min_err = min(english_err, french_err, italian_err)
 
-				print("MIN ERR:", min_err)
+				# print("MIN ERR:", min_err)
 
-				# Print output to file
+				# Add predicted language with line number to file
 				if min_err == english_err:
-					print("ENG")
+					# print("ENG")
 					output.write(str(line_num) + ' English\n')
 				elif min_err == french_err:
-					print("FRE")
+					# print("FRE")
 					output.write(str(line_num) + ' French\n')
 				elif min_err == italian_err:
-					print("ITA")
+					# print("ITA")
 					output.write(str(line_num) + ' Italian\n')
 
 				line_num += 1
 
 
-def accuracy_check(predictions, solutions, model_type, smoothing):
+def accuracy_check(predictions, solutions):
 	"""
 	Calculates and prints accuracy of language identification model.
 	"""
@@ -215,16 +216,13 @@ def accuracy_check(predictions, solutions, model_type, smoothing):
 			out.seek(0)
 			diff = set(soln).difference(out)
 
-	if smoothing == 0:
-		smoothing = "No"
-	elif smoothing == 1:
-		smoothing = "LaPlace"
-	elif smoothing == 2:
-		smoothing = "Good-Turing"
+	# First word in path
+	model_type = predictions.split("-")[0].split("/")[-1].capitalize()
+	# Third word from end of path
+	smoothing = predictions.split("-")[-3].capitalize()
 
-	print("\n------------\nModel Evaluation\n------------\n")
-	print("{} Bigrams with {} Smoothing...".format(model_type, smoothing))
-	print("Correct: " + str(len(same)) + "\nAcc: " + str(float(str(len(same) / (len(same) + len(diff)))[0:7]) * 100) + "%")
+	print("\n{} Bigrams with {} Smoothing...".format(model_type, smoothing))
+	print("\tCorrect: " + str(len(same)) + "\n\tAcc: " + str(float(str(len(same) / (len(same) + len(diff)))[0:7]) * 100) + "%")
 
 
 def main():
@@ -235,7 +233,7 @@ def main():
 	# Train letter bigram models with no smoothing
 	##############
 
-	print("Training letter bigram models with no smoothing...")
+	print("\tTraining letter bigram models with no smoothing...")
 
 	eng_letter_bigrams_no_smoothing = bigram_processing("letter",
 	                                           "../data/english-train.txt",
@@ -251,7 +249,7 @@ def main():
 	# Train letter bigram models with add one smoothing
 	##############
 
-	print("Training letter bigram models with add one smoothing...")
+	print("\tTraining letter bigram models with LaPlace smoothing...")
 
 	eng_letter_bigrams_laplace = bigram_processing("letter",
 	                                           "../data/english-train.txt",
@@ -267,6 +265,8 @@ def main():
 	# Train word bigram models with no smoothing
 	##############
 
+	print("\tTraining word bigram models with no smoothing...")
+
 	eng_word_bigrams_no_smoothing = bigram_processing("word",
 	                                                  "../data/english-train.txt",
 	                                                  smoothing=0)
@@ -281,6 +281,8 @@ def main():
 	# Train word bigram models with add one smoothing
 	##############
 
+	print("\tTraining word bigram models with LaPlace smoothing...")
+
 	eng_word_bigrams_laplace = bigram_processing("word",
 	                                             "../data/english-train.txt",
 	                                             smoothing=1)
@@ -291,7 +293,7 @@ def main():
 	                                             "../data/italian-train.txt",
 	                                             smoothing=1)
 
-	print("Done training!")
+	print("-> Done training!\n")
 
 	##############
 	# Apply models to determine most likely language
@@ -299,13 +301,62 @@ def main():
 
 	print("Appling each model to create a set of language predictions...")
 
-	test_models("../output/letter-bigram-out.txt", word=False)
+	# Letter bigram models
+
+	print("\tLetter bigram models with no smoothing...")
+	test_models("../output/letter-bigram-no-smoothing-predictions.txt",
+	            False,
+	            eng_letter_bigrams_no_smoothing,
+	            fre_letter_bigrams_no_smoothing,
+	            ita_letter_bigrams_no_smoothing,
+	            0)
+
+	print("\tLetter bigram models with LaPlace smoothing...")
+	test_models("../output/letter-bigram-laplace-smoothing-predictions.txt",
+	            False,
+	            eng_letter_bigrams_laplace,
+	            fre_letter_bigrams_laplace,
+	            ita_letter_bigrams_laplace,
+	            1)
+
+	# Word bigram models
+
+	print("\tWord bigram models with no smoothing...")
+	test_models("../output/word-bigram-no-smoothing-predictions.txt",
+	            True,
+	            eng_word_bigrams_no_smoothing,
+	            fre_word_bigrams_no_smoothing,
+	            ita_word_bigrams_no_smoothing,
+	            0)
+
+	print("\tWord bigram models with LaPlace smoothing...")
+	test_models("../output/word-bigram-laplace-smoothing-predictions.txt",
+	            True,
+	            eng_word_bigrams_laplace,
+	            fre_word_bigrams_laplace,
+	            ita_word_bigrams_laplace,
+	            1)
+
 
 	##############
 	# Evaluate model performance
 	##############
 
-	accuracy_check("../data/correct-responses.txt", "../output/letter-bigram-out.txt")
+	print("\n------------\nModel Evaluation\n------------\n")
+
+	accuracy_check("../output/letter-bigram-no-smoothing-predictions.txt",
+	               "../data/correct-responses.txt")
+
+	accuracy_check("../output/letter-bigram-laplace-smoothing-predictions.txt",
+	               "../data/correct-responses.txt")
+
+	accuracy_check("../output/word-bigram-no-smoothing-predictions.txt",
+	               "../data/correct-responses.txt")
+
+	accuracy_check("../output/word-bigram-laplace-smoothing-predictions.txt",
+	               "../data/correct-responses.txt")
+
+	print("\nDiff the output files to see what lines were predicted differently by pairs of models.")
 
 
 if __name__ == "__main__":
