@@ -2,7 +2,7 @@
 
 `text-language-identifier` accurately identifies English, French and Italian written text with up to 99% accuracy.
 
-Since this project was intended to help me better understand `n-gram analysis`, no natural language processing modules were imported. Everything was implemented from first principles.
+Since this project was used to better understand `n-gram analysis`, no natural language processing modules were imported -- everything was implemented from first principles.
 
 ![GIF demo](img/demo.gif)
 
@@ -22,8 +22,10 @@ $ diff ../output/letter-bigram-laplace-smoothing-predictions.txt ../output/word-
 $ diff ../output/letter-bigram-laplace-smoothing-predictions.txt ../output/word-bigram-laplace-smoothing-predictions.txt
 ```
 
+### How does it work?
+
+This program creates a probabilistic model of each language based on bigram analyses of French, English and Italian sample corpora. To predict the language of a test sentence, it creates another probabilistic model to represent the sentence and chooses the language whose model is most similar to the sentence model using the RMSE.
+
 ### Why?
 
 This is was a computational linguistics experiment to see which language model, word or letter bigrams, performs the best. I also tested the impact of LaPlace smoothing on the predictive accuracy of the model.
-
-Also for fun and profit.
