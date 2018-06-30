@@ -1,8 +1,7 @@
 # alichtman
 
-import bigrams
+from bigrams import convert_file_to_bigrams, get_bigrams
 import string
-from pprint import pprint
 
 
 def create_letter_dict(file_text):
@@ -21,7 +20,7 @@ def create_letter_dict(file_text):
 
 	# pprint(letter_list)
 
-	return bigrams.bigrams(letter_list)
+	return get_bigrams(letter_list)
 
 
 def word_count(bigrams_dict):
@@ -56,7 +55,6 @@ def word_count(bigrams_dict):
 
 def vocabulary_size(word_dict):
 	"""Returns the vocabulary size of a word count dictionary"""
-
 	return len(word_dict)
 
 
@@ -135,13 +133,10 @@ def bigram_processing(bigram_type, file, smoothing):
 	"""
 	Run word processing pipeline on file.
 	"""
-
-	bigrams_dict = dict()
-
 	if bigram_type == "word":
 		# Get bigram word mapping of training data
 		#        word -> {(next word -> count), ...}
-		bigram_dict = bigrams.file2bigrams(file)
+		bigram_dict = convert_file_to_bigrams(file)
 	else:
 		bigram_dict = create_letter_dict(open(file).read().replace("\n", ""))
 
@@ -168,11 +163,9 @@ def test_models(output_file, word_bigram, eng_model, fre_model, ita_model, smoot
 	with open("../data/test-input.txt", "r") as test_file:
 		with open(output_file, "w+") as output:
 			for line in test_file:
-				line_bigrams = []
-
 				# Get word or letter bigrams
 				if word_bigram:
-					line_bigrams = bigrams.bigrams(line.split())
+					line_bigrams = get_bigrams(line.split())
 				else:
 					line_bigrams = create_letter_dict(line)
 
@@ -207,7 +200,6 @@ def accuracy_check(predictions, solutions):
 	"""
 	Calculates and prints accuracy of language identification model.
 	"""
-
 	# https://stackoverflow.com/a/16289797/8740440
 	with open(predictions) as out:
 		with open(solutions) as soln:
@@ -222,11 +214,12 @@ def accuracy_check(predictions, solutions):
 	smoothing = predictions.split("-")[-3].capitalize()
 
 	print("\n{} Bigrams with {} Smoothing...".format(model_type, smoothing))
-	print("\tCorrect Predictions: " + str(len(same)) + "\n\tTotal Predictions: " + str(len(same) + len(diff)) + "\n\tAccuracy: " + str(float(str(len(same) / (len(same) + len(diff)))[0:7]) * 100) + "%")
+	print("\tCorrect Predictions: " + str(len(same)) + "\n\tTotal Predictions: " + str(
+		len(same) + len(diff)) + "\n\tAccuracy: " + str(
+		float(str(len(same) / (len(same) + len(diff)))[0:7]) * 100) + "%")
 
 
 def main():
-
 	print("Training english, french and italian models...")
 
 	##############
@@ -235,15 +228,9 @@ def main():
 
 	print("\tTraining letter bigram models with no smoothing...")
 
-	eng_letter_bigrams_no_smoothing = bigram_processing("letter",
-	                                           "../data/english-training.txt",
-	                                           smoothing=0)
-	fre_letter_bigrams_no_smoothing = bigram_processing("letter",
-	                                          "../data/french-training.txt",
-	                                          smoothing=0)
-	ita_letter_bigrams_no_smoothing = bigram_processing("letter",
-	                                           "../data/italian-training.txt",
-	                                           smoothing=0)
+	eng_letter_bigrams_no_smoothing = bigram_processing("letter", "../data/english-training.txt", smoothing=0)
+	fre_letter_bigrams_no_smoothing = bigram_processing("letter", "../data/french-training.txt", smoothing=0)
+	ita_letter_bigrams_no_smoothing = bigram_processing("letter", "../data/italian-training.txt", smoothing=0)
 
 	##############
 	# Train letter bigram models with add one smoothing
@@ -251,15 +238,9 @@ def main():
 
 	print("\tTraining letter bigram models with LaPlace smoothing...")
 
-	eng_letter_bigrams_laplace = bigram_processing("letter",
-	                                           "../data/english-training.txt",
-	                                           smoothing=1)
-	fre_letter_bigrams_laplace = bigram_processing("letter",
-	                                          "../data/french-training.txt",
-	                                          smoothing=1)
-	ita_letter_bigrams_laplace = bigram_processing("letter",
-	                                           "../data/italian-training.txt",
-	                                           smoothing=1)
+	eng_letter_bigrams_laplace = bigram_processing("letter", "../data/english-training.txt", smoothing=1)
+	fre_letter_bigrams_laplace = bigram_processing("letter", "../data/french-training.txt", smoothing=1)
+	ita_letter_bigrams_laplace = bigram_processing("letter", "../data/italian-training.txt", smoothing=1)
 
 	##############
 	# Train word bigram models with no smoothing
@@ -267,15 +248,9 @@ def main():
 
 	print("\tTraining word bigram models with no smoothing...")
 
-	eng_word_bigrams_no_smoothing = bigram_processing("word",
-	                                                  "../data/english-training.txt",
-	                                                  smoothing=0)
-	fre_word_bigrams_no_smoothing = bigram_processing("word",
-	                                                  "../data/french-training.txt",
-	                                                  smoothing=0)
-	ita_word_bigrams_no_smoothing = bigram_processing("word",
-	                                                  "../data/italian-training.txt",
-	                                                  smoothing=0)
+	eng_word_bigrams_no_smoothing = bigram_processing("word", "../data/english-training.txt", smoothing=0)
+	fre_word_bigrams_no_smoothing = bigram_processing("word", "../data/french-training.txt", smoothing=0)
+	ita_word_bigrams_no_smoothing = bigram_processing("word", "../data/italian-training.txt", smoothing=0)
 
 	##############
 	# Train word bigram models with add one smoothing
@@ -283,15 +258,9 @@ def main():
 
 	print("\tTraining word bigram models with LaPlace smoothing...")
 
-	eng_word_bigrams_laplace = bigram_processing("word",
-	                                             "../data/english-training.txt",
-	                                             smoothing=1)
-	fre_word_bigrams_laplace = bigram_processing("word",
-	                                             "../data/french-training.txt",
-	                                             smoothing=1)
-	ita_word_bigrams_laplace = bigram_processing("word",
-	                                             "../data/italian-training.txt",
-	                                             smoothing=1)
+	eng_word_bigrams_laplace = bigram_processing("word", "../data/english-training.txt", smoothing=1)
+	fre_word_bigrams_laplace = bigram_processing("word", "../data/french-training.txt", smoothing=1)
+	ita_word_bigrams_laplace = bigram_processing("word", "../data/italian-training.txt", smoothing=1)
 
 	print("-> Done training!\n")
 
@@ -337,7 +306,6 @@ def main():
 	            ita_word_bigrams_laplace,
 	            1)
 
-
 	##############
 	# Evaluate model performance
 	##############
@@ -358,9 +326,12 @@ def main():
 
 	print("\nDiff the output files to see which lines were predicted differently by certain pairs of models.")
 	print("Here are some commands to try:")
-	print("\n$ diff ../output/letter-bigram-laplace-smoothing-predictions.txt ../output/letter-bigram-no-smoothing-predictions.txt")
-	print("$ diff ../output/letter-bigram-laplace-smoothing-predictions.txt ../output/word-bigram-no-smoothing-predictions.txt")
-	print("$ diff ../output/letter-bigram-laplace-smoothing-predictions.txt ../output/word-bigram-laplace-smoothing-predictions.txt")
+	print(
+		"\n$ diff ../output/letter-bigram-laplace-smoothing-predictions.txt ../output/letter-bigram-no-smoothing-predictions.txt")
+	print(
+		"$ diff ../output/letter-bigram-laplace-smoothing-predictions.txt ../output/word-bigram-no-smoothing-predictions.txt")
+	print(
+		"$ diff ../output/letter-bigram-laplace-smoothing-predictions.txt ../output/word-bigram-laplace-smoothing-predictions.txt")
 
 
 if __name__ == "__main__":

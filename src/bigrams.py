@@ -1,7 +1,7 @@
 from dicts import DefaultDict
 
 
-def bigrams(words):
+def get_bigrams(words):
 	"""
 	Given an array of words, returns a dictionary of dictionaries,
 	containing occurrence counts of bigrams.
@@ -12,8 +12,8 @@ def bigrams(words):
 	return d
 
 
-def file2bigrams(filename):
+def convert_file_to_bigrams(filename):
 	"""
 	Takes a file as input and returns a bigram dictionary.
 	"""
-	return bigrams(open(filename).read().split())
+	return get_bigrams(open(filename).read().split())
